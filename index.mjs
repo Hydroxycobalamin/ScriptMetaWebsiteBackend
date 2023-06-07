@@ -57,7 +57,7 @@ app.get("/api/information", (req, res) => {
 });
 
 app.get("/api/event", (req, res) => {
-    const filteredData = cachedData.filter((obj) => obj?.type === "event");
+    const filteredData = cachedData.flat().filter((obj) => obj?.type === "event");
     res.json({ returnMessage: filteredData });
 });
 
