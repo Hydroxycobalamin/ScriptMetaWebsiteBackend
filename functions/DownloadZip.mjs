@@ -18,6 +18,9 @@ function createDirectory(directory) {
 async function startZIP() {
     console.log("Start ZIP process");
     try {
+        if (fs.existsSync(downloadDirectory)) {
+            deleteFolderRecursive(downloadDirectory)
+        }
         createDirectory(downloadDirectory);
 
         const processZIPs = async () => {
@@ -26,41 +29,24 @@ async function startZIP() {
                 const projectName = GetProjectNameFromUrl(url);
                 const projectDirectoryName = `${projectName}`;
                 const projectDirectory = path.join(downloadDirectory, projectDirectoryName);
-                // Is already downloaded?
-                const alreadyDownloaded = fs.existsSync(projectDirectory);
-                // Does it have to be redownloaded?
-                const zipFileShouldBeDownloaded = !alreadyDownloaded || isZipFileOlderThan24Hours(projectDirectory, projectName);
-                if (zipFileShouldBeDownloaded) {
-                    // Remove download folder
-                    deleteFolderRecursive(projectDirectory);
 
-                    createDirectory(projectDirectory);
-                    const zipFilePath = await DownloadZIP(url, projectName);
-                    ExtractZIP(zipFilePath, projectDirectory);
-                    console.log("ZIP extraction complete");
-                }
-                const objectsFilePath = path.join(downloadDirectory, "objects.json");
+                createDirectory(projectDirectory);
+                const zipFilePath = await DownloadZIP(url, projectName);
+                ExtractZIP(zipFilePath, projectDirectory);
+                console.log("ZIP extraction complete");
 
-                let objects = null; // Cache
+                let objects = null;
 
-                // Cache exists?
-                if (!fs.existsSync(objectsFilePath)) {
-                    const dscFiles = ReadFiles(downloadDirectory);
-                    const filePromises = dscFiles.map((file) => {
-                        return ReadLineByLine(file, GetProjectPathFromUrl(url));
-                    });
-                    objects = await Promise.all(filePromises);
-                    objects = objects.flat().filter((object) => object && object !== null && Object.keys(object).length !== 0);
-
-                    fs.writeFileSync(objectsFilePath, JSON.stringify(objects));
-                } else {
-                    // Load Cache
-                    const cachedDataFromFile = fs.readFileSync(objectsFilePath, "utf-8");
-                    return JSON.parse(cachedDataFromFile);
-                }
+                const dscFiles = ReadFiles(projectDirectory);
+                const filePromises = dscFiles.map((file) => {
+                    return ReadLineByLine(file, GetProjectPathFromUrl(url));
+                });
+                objects = await Promise.all(filePromises);
+                objects = objects.flat().filter((object) => object && object !== null && Object.keys(object).length !== 0);
                 results.push(objects);
             }
-
+            const objectsFilePath = path.join(downloadDirectory, "objects.json");
+            fs.writeFileSync(objectsFilePath, JSON.stringify(results));
             return results;
         };
 
