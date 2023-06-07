@@ -7,7 +7,6 @@ import { GetProjectNameFromUrl, GetProjectPathFromUrl } from "./URLHandler.mjs";
 import { uris } from "../config/config.mjs";
 
 const downloadDirectory = "./data/downloads";
-const zipDownloadInterval = 86400000;
 
 function createDirectory(directory) {
     if (!fs.existsSync(directory)) {
@@ -55,20 +54,6 @@ async function startZIP() {
         console.error(error);
         return [];
     }
-}
-
-function isZipFileOlderThan24Hours(directory, projectName) {
-    const zipFilePath = path.join(directory, `${projectName}.zip`);
-    if (!fs.existsSync(zipFilePath)) {
-        return true;
-    }
-
-    const stats = fs.statSync(zipFilePath);
-    const now = new Date();
-    const zipModifiedTime = new Date(stats.mtime);
-
-    // ZIP older than 24h?
-    return now - zipModifiedTime > zipDownloadInterval;
 }
 
 function deleteFolderRecursive(directory) {
