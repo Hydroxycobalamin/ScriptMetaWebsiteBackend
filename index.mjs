@@ -11,7 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-let cachedData = null;
+var cachedData = null;
 
 app.post("/api/reload", (req, res) => {
     try {
@@ -37,22 +37,22 @@ app.get("/api/all", (req, res) => {
 });
 
 app.get("/api/task", (req, res) => {
-    const filteredData = cachedData.filter((obj) => obj?.type === "task");
+    const filteredData = cachedData.flat().filter((obj) => obj?.type === "task");
     res.json({ returnMessage: filteredData });
 });
 
 app.get("/api/script", (req, res) => {
-    const filteredData = cachedData.filter((obj) => obj?.type === "script");
+    const filteredData = cachedData.flat().filter((obj) => obj?.type === "script");
     res.json({ returnMessage: filteredData });
 });
 
 app.get("/api/procedure", (req, res) => {
-    const filteredData = cachedData.filter((obj) => obj?.type === "procedure");
+    const filteredData = cachedData.flat().filter((obj) => obj?.type === "procedure");
     res.json({ returnMessage: filteredData });
 });
 
 app.get("/api/information", (req, res) => {
-    const filteredData = cachedData.filter((obj) => obj?.type === "information");
+    const filteredData = cachedData.flat().filter((obj) => obj?.type === "information");
     res.json({ returnMessage: filteredData });
 });
 
