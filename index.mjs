@@ -13,13 +13,13 @@ app.use(express.json());
 
 var cachedData = null;
 
-app.post("/api/reload", (req, res) => {
+app.post("/api/reload", async (req, res) => {
     try {
         const expectedSignature = req.headers["x-hub-signature-256"];
         const calculatedSignature = `sha256=${crypto.createHmac("sha256", token).update(JSON.stringify(req.body)).digest("hex")}`;
 
         if (expectedSignature === calculatedSignature) {
-            cachedData = startZIP();
+            cachedData = await startZIP();
 
             res.status(200).json({ message: "Reload successful" });
         } else {
