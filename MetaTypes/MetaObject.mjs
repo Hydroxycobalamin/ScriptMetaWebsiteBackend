@@ -1,5 +1,5 @@
 import { multiLineFields, metaFields, validMetaObjects } from "./MetaTypes.mjs";
-import { trimTextLines } from "../MetaHelper/MetaHelper.mjs";
+import { trimTextLines, isValidField } from "../MetaHelper/MetaHelper.mjs";
 
 function GenerateMetaObject(dataLines, source, metaType) {
     var trimmedLines = trimTextLines(dataLines);
@@ -9,9 +9,13 @@ function GenerateMetaObject(dataLines, source, metaType) {
     var fieldValueArray = [];
 
     for (let i = 0; i < trimmedLines.length; i++) {
+        // multiline logic
         if (isMultiLine) {
-            if (!trimmedLines[i].startsWith("@") && i !== trimmedLines.length - 1) {
-                if (currentField !== "description" && !trimmedLines[i]) {
+            if (!trimmedLines[i].startsWith("@")) {
+                if (i + 2 > trimmedLines.length) {
+                    if (trimmedLines[i].length > 0) {
+                        fieldValueArray.push(trimmedLines[i]);
+                    }
                     metaObject[currentField] = fieldValueArray;
                     isMultiLine = false;
                     fieldValueArray = [];
@@ -35,20 +39,20 @@ function GenerateMetaObject(dataLines, source, metaType) {
             }
             isMultiLine = fieldInfo.multiline;
             currentField = trimmedField;
+            // Warn if field isn't known.
+            isValidField(currentField, metaType);
         } else if (line.startsWith("@")) {
             var parts = line.substring(1).split(" ");
             var field = parts[0].toLowerCase();
             var value = parts.splice(1).join(" ");
+            // Do not allow unknown meta types to be loaded.
             if (!validMetaObjects.includes(metaType)) {
                 console.error("metaType: " + metaType + " is not a valid metaType.");
                 return null;
             }
-            // Do not save field if it's not valid.
-            if (metaFields[metaType].requiredFields.includes(field) || metaFields[metaType].optionalFields.includes(field)) {
-                metaObject[field] = value;
-            } else {
-                console.error("Unknown field found for meta: " + metaType + field);
-            }
+            // Save fields, but warn.
+            isValidField(field, metaType);
+            metaObject[field] = value;
         }
     }
 

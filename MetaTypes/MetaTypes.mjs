@@ -32,7 +32,7 @@ const taskFields = {
 
 const procedureFields = {
     requiredFields: ["attribute", "returns", "description", "source"],
-    optionalFields: ["warning", "group", "script"]
+    optionalFields: ["warning", "group", "script", "example"]
 };
 
 const informationFields = {
