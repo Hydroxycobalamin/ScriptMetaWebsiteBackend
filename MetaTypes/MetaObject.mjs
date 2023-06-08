@@ -19,7 +19,7 @@ function GenerateMetaObject(dataLines, source, metaType) {
                     metaObject[currentField] = fieldValueArray;
                     isMultiLine = false;
                     fieldValueArray = [];
-                } else {
+                } else if (!trimmedLines[i+1].startsWith("@")) {
                     fieldValueArray.push(trimmedLines[i]);
                 }
             } else {
