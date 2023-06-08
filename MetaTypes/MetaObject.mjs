@@ -12,14 +12,18 @@ function GenerateMetaObject(dataLines, source, metaType) {
         // multiline logic
         if (isMultiLine) {
             if (!trimmedLines[i].startsWith("@")) {
-                if (i + 2 > trimmedLines.length) {
+                if (i + 1 == trimmedLines.length) {
                     if (trimmedLines[i].length > 0) {
                         fieldValueArray.push(trimmedLines[i]);
                     }
                     metaObject[currentField] = fieldValueArray;
                     isMultiLine = false;
                     fieldValueArray = [];
-                } else if (!trimmedLines[i+1].startsWith("@")) {
+                } else if (trimmedLines[i].length == 0 && trimmedLines[i+1].startsWith("@")) {
+                    metaObject[currentField] = fieldValueArray;
+                    isMultiLine = false;
+                    fieldValueArray = [];
+                } else {
                     fieldValueArray.push(trimmedLines[i]);
                 }
             } else {
