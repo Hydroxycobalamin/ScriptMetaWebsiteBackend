@@ -17,7 +17,7 @@ const validMetaObjects = [
 
 const eventFields = {
     requiredFields: ["events", "triggers"],
-    optionalFields: ["warning", "group", "switch", "location", "player", "example", "script", "context"]
+    optionalFields: ["warning", "group", "switch", "location", "player", "example", "script", "context", "cancellable"]
 }
 
 const scriptFields = {
