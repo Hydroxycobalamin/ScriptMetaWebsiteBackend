@@ -11,10 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "adm-zip": "^0.5.10",
-    "axios": "^1.4.0",
+    "adm-zip": "^0.5.16",
+    "axios": "^1.8.4",
     "cors": "^2.8.5",
-    "express": "^4.18.2",
+    "express": "^4.21.2",
     "fs": "^0.0.1-security"
   }
 }
